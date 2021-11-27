@@ -1,31 +1,39 @@
 <template>
   <loading v-if="showLoading"></loading>
+  <!--<div>{{$store.state.favoritos}}</div>-->
   <div class="lista">
     <div class="container">
       <search></search>
-      <ul class="lista-poke">
-        <li v-for="(pokemon, index) in pokemons"
-          :key="'poke'+index"
-          @click="setPokemonUrl(pokemon.url)"
-          class="item">
-          {{ pokemon.name }}
-          <div class="fav"><i class="fa fa-star" aria-hidden="true"></i></div>
-        </li>
-      </ul>
-      <div id="scroll-trigger" ref="infinitescrolltrigger"></div>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <ul class="lista-poke">
+            <li v-for="(pokemon, index) in pokemons"
+              :key="'poke'+index"
+              class="item">
+              <a @click="openPokemon(pokemon)">{{ pokemon.name }}</a>
+              <div class="fav" :class="checkFav(pokemon.name)?'selected':''" @click="addFavoriteStore(pokemon.name)"><i class="fa fa-star" aria-hidden="true"></i></div>
+            </li>
+          </ul>
+          <div id="scroll-trigger" ref="infinitescrolltrigger"></div>
+        </div>
+        
+      </div>
     </div>
+    <modal v-if="verModal" :pokemonUrl="currentPoke"></modal>
   </div>
+  
 </template>
 <script>
 // @ is an alias to /src
 import Search from '@/components/Search.vue'
 import Loading from '../components/Loading.vue'
-
+import Modal from '../components/Modal.vue'
 export default {
   name: 'Lista',
   components: {
     Search,
-    Loading
+    Loading,
+    Modal
   },
   data: () => {
     return {
@@ -33,7 +41,9 @@ export default {
       showDetail: false,
       pokemons: [],
       nextUrl: '',
-      currentUrl: ''
+      currentUrl: '',
+      verModal: false,
+      currentPoke:null
     };
   },
   methods: {
@@ -73,8 +83,22 @@ export default {
         this.currentUrl = this.nextUrl;
         this.fetchData();
       },
-      setPokemonUrl(url) {
-        this.$emit('setPokemonUrl', url);
+      
+      addFavoriteStore(name){
+          this.$store.commit('addFav', name)
+      },
+      checkFav(name){
+        if(this.$store.state.favoritos.includes(name)){
+          return true;
+        }else{
+          return false
+        }        
+      },
+      openPokemon(data){
+        console.log('pql:',data);
+        this.verModal = true;
+        this.currentPoke = data.url;
+        
       }
   },
   created() {
@@ -84,6 +108,7 @@ export default {
   },
   mounted() {
     this.scrollTrigger();
+    console.log(this.$store)
   }
 }
 </script>
@@ -103,6 +128,9 @@ export default {
       padding: 10px 15px;
       margin: 0 0 15px 0;
       position: relative;
+      a{
+        cursor: pointer;
+      }
       .fav{
         background: #F5F5F5;
         position: absolute;
@@ -114,7 +142,8 @@ export default {
         height: 34px;
         color: #BFBFBF;
         text-align: center;
-        &.selected{
+        cursor: pointer;
+        &.selected, &:hover{
           color:#ECA539;
         }
       }

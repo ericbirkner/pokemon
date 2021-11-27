@@ -46,16 +46,4 @@
   }
 }
 
-.lista{
-  background: #E5E5E5;
-  border: 1px solid transparent;
-  .lista-poke{
-    li{
-      list-style: none;
-      background: #fff;
-      line-height: 27px;
-    }
-  }
-}
-
 </style>
