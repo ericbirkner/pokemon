@@ -1,15 +1,15 @@
 <template>
   
-    <div id="myModal" class="modalPok">
+    <div id="myModal" class="modalPok shadow">
         <!-- Modal content -->
-        <div class="modal-content">
+        <div v-if="pokemon.id" class="modal-content" >
             <div class="header">
                 <a class="close" @click="$parent.verModal = false"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
                 <img :src="imageUrl + pokemon.id + '.png'" alt="" class="fotoPoke">
             </div>
             <div class="details">
                 
-                <ul>
+                <ul class="mb-4">
                     <li><strong>Name:</strong> {{pokemon.name}}</li>
                     <li><strong>Weight:</strong> {{pokemon.weight}}</li>
                     <li><strong>Height:</strong> {{pokemon.height}}</li>
@@ -21,9 +21,19 @@
                     </li>
                 </ul>
 
-            </div>
+                <div class="mt-4 text-start position-relative">
+                    <a @click="copyAttr()" class="boton">Share to my friends</a>
+                    <div class="fav add" :class="$parent.checkFav(pokemon.name)?'selected':''" @click="$parent.addFavoriteStore(pokemon.name)"><i class="fa fa-star" aria-hidden="true"></i></div>
+                </div>
 
-            
+            </div>            
+        </div>
+        <div v-if="error" class="modal-content">
+            <div class="details">
+                <h3>Uh-oh!</h3>
+                <p class="mt-3">You look lost on your journey!</p>
+                <p class="mt-4"><a class="boton " @click="$parent.verModal = false">Go back home</a></p>
+            </div>
         </div>
     </div>
     
@@ -36,6 +46,8 @@ export default {
   data: () => {
     return {
       pokemon:[],
+      error: false,
+      existe: true
     };
   },
   methods: {
@@ -43,8 +55,12 @@ export default {
     let req = new Request(this.pokemonUrl);
     fetch(req)
         .then((resp) => {
-        if(resp.status === 200)
-            return resp.json();
+            if(resp.status === 200){
+                this.existe = true;
+                return resp.json();
+            }else{
+                this.error = true;
+            }            
         })
         .then((data) => {
             this.pokemon = data;
@@ -54,6 +70,10 @@ export default {
             console.log(error);
         })
     },
+    copyAttr(){
+        const texto = 'Name: '+this.pokemon.name + ', Weight: ' + this.pokemon.weight + ', Height: ' + this.pokemon.height;
+        navigator.clipboard.writeText(texto);
+    }
     
   },
   created() {
@@ -73,7 +93,7 @@ export default {
 
     /* The Modal (background) */
     .modalPok {
-        display: block; /* Hidden by default */
+        display: flex; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         left: 0;
@@ -82,15 +102,14 @@ export default {
         height: 100%; /* Full height */
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        align-items: center;
+        justify-content: center;
     }
 
     /* Modal Content/Box */
     .modal-content {
         background-color: #fefefe;
-        margin: 15% auto; /* 15% from the top and centered */
-        
-        border: 1px solid #888;
         width: 40%; /* Could be more or less, depending on screen size */
         @media only screen and (max-width: 600px) {
             width: 80%;
@@ -98,6 +117,7 @@ export default {
         .details{
             padding: 20px;
         }
+        
     }
 
     .header{
@@ -143,6 +163,12 @@ export default {
         color: #fefefe;
         text-decoration: none;
         cursor: pointer;
+    }
+
+    .add{
+        top: -6px;
+        right: 0;
+        font-size: 20px;
     }
 
 </style>

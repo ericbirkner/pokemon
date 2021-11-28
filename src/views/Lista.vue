@@ -7,21 +7,40 @@
       <div class="row justify-content-center">
         <div class="col-md-8">
           <ul class="lista-poke">
-            <li v-for="(pokemon, index) in pokemons"
-              :key="'poke'+index"
-              class="item">
-              <a @click="openPokemon(pokemon)">{{ pokemon.name }}</a>
-              <div class="fav" :class="checkFav(pokemon.name)?'selected':''" @click="addFavoriteStore(pokemon.name)"><i class="fa fa-star" aria-hidden="true"></i></div>
-            </li>
+
+              <template v-for="(pokemon, index) in pokemons" :key="'poke'+index">
+                <li class="item" v-if="(favoritesOn && checkFav(pokemon.name))">
+                  <a @click="openPokemon(pokemon.url)">{{ pokemon.name }}</a>
+                  <div class="fav" :class="checkFav(pokemon.name)?'selected':''" @click="addFavoriteStore(pokemon.name)"><i class="fa fa-star" aria-hidden="true"></i></div>
+                </li>
+                <li class="item" v-else-if="!favoritesOn">
+                  <a @click="openPokemon(pokemon.url)">{{ pokemon.name }}</a>
+                  <div class="fav" :class="checkFav(pokemon.name)?'selected':''" @click="addFavoriteStore(pokemon.name)"><i class="fa fa-star" aria-hidden="true"></i></div>
+                </li>
+
+              </template>
+    
           </ul>
           <div id="scroll-trigger" ref="infinitescrolltrigger"></div>
         </div>
         
       </div>
     </div>
+    
     <modal v-if="verModal" :pokemonUrl="currentPoke"></modal>
   </div>
-  
+  <div class="footer-menu shadow">
+    <div class="container">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-6 col-md-4">
+          <a @click="showFav(false)" class="boton menu-button" :class="(favoritesOn)?'disabled':''"><i class="fa fa-list me-1" aria-hidden="true"></i>All</a>
+        </div>
+        <div class="col-6 col-md-4">
+          <a @click="showFav(true)" class="boton menu-button" :class="(favoritesOn)?'':'disabled'"><i class="fa fa-star me-1" aria-hidden="true"></i>Favorites</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
 // @ is an alias to /src
@@ -43,7 +62,8 @@ export default {
       nextUrl: '',
       currentUrl: '',
       verModal: false,
-      currentPoke:null
+      currentPoke:null,
+      favoritesOn:false,
     };
   },
   methods: {
@@ -95,10 +115,11 @@ export default {
         }        
       },
       openPokemon(data){
-        console.log('pql:',data);
         this.verModal = true;
-        this.currentPoke = data.url;
-        
+        this.currentPoke = data;        
+      },
+      showFav(valor){
+        this.favoritesOn = valor;
       }
   },
   created() {
@@ -116,6 +137,8 @@ export default {
 .lista{
   background: #E5E5E5;
   border: 1px solid transparent;
+  padding-bottom: 100px;
+  min-height: 100vh;
   .lista-poke{
     padding: 0;
     margin: 0;
@@ -131,23 +154,17 @@ export default {
       a{
         cursor: pointer;
       }
-      .fav{
-        background: #F5F5F5;
-        position: absolute;
-        border-radius: 50%;
-        right: 15px;
-        line-height: 1.5;
-        top: 6px;
-        width: 34px;
-        height: 34px;
-        color: #BFBFBF;
-        text-align: center;
-        cursor: pointer;
-        &.selected, &:hover{
-          color:#ECA539;
-        }
-      }
+      
     }
   }
+}
+.footer-menu{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 70px;
+  width: 100%;
+  background: #fff;
+  
 }
 </style>

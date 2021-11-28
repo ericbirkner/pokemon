@@ -2,7 +2,9 @@
   
     <div class="row mt-3 mb-5 d-flex justify-content-center align-items-center">
         <div class="col-md-8">
-            <div class="search"> <i class="fa fa-search"></i> <input type="text" class="form-control" placeholder="Have a question? Ask Now"> </div>
+          <form @submit.prevent="setPokemonUrl">
+            <div class="search"> <i class="fa fa-search" @click="setPokemonUrl"></i> <input type="search" class="form-control" placeholder="Search" v-model="searchvalue"> </div>
+          </form>
         </div>
     </div>
   
@@ -11,8 +13,19 @@
 <script>
 export default {
   name: 'Search',
-  props: {
-    msg: String
+  props: [],
+  data: () => {
+    return {
+      searchvalue: '',
+    }
+  },
+  methods: {
+    setPokemonUrl() {
+      if(this.searchvalue !== ''){
+        this.$parent.openPokemon(this.apiUrl + this.searchvalue);
+      }
+        
+    }
   }
 }
 </script>

@@ -19,8 +19,35 @@
   color: #fff;
   text-decoration: none;
   &:hover, &:active{
+    cursor: pointer;
     background: #C00E20;
     color: #fff;
+  }
+  &.menu-button{
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    margin-top: 12px;
+    &.disabled{
+      background: #BFBFBF;
+    }
+  }
+}
+
+.fav{
+  background: #F5F5F5;
+  position: absolute;
+  border-radius: 50%;
+  right: 15px;
+  line-height: 1.5;
+  top: 6px;
+  width: 34px;
+  height: 34px;
+  color: #BFBFBF;
+  text-align: center;
+  cursor: pointer;
+  &.selected, &:hover{
+    color:#ECA539;
   }
 }
 
