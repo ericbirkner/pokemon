@@ -15,5 +15,7 @@ npm run serve
 npm run build
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Comentarios
+se uso vue3 cli con sass, router y vuex, adicional solo se instaló bootstrap 
+para agilizar algunas cosas
+
